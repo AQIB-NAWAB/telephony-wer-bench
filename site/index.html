@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>telephony-wer-bench: how well does speech-to-text hear a phone call?</title>
+  <meta name="description" content="An open source benchmark that streams phone-quality audio to speech-to-text services and measures word error rate, latency and partial stability.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <meta property="og:title" content="telephony-wer-bench">
+  <meta property="og:description" content="Word error rate, latency and partial stability of streaming speech-to-text on 8 kHz phone audio.">
+  <meta property="og:image" content="https://telephony-wer-bench.vercel.app/images/wer-by-condition.png">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="name" href="/">telephony-wer-bench</a>
+    <nav>
+      <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">GitHub</a>
+      <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/tree/main/docs">Docs</a>
+      <a href="https://voice-eval-toolkit.vercel.app">Related</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h1>How well does speech-to-text hear a phone call?</h1>
+  <p class="lead">telephony-wer-bench takes clean speech, makes it sound like a phone line, streams it to a speech-to-text service in real time, and measures how many words it got wrong and how fast it answered.</p>
+  <p class="sub">It is a Python command line tool called <code>twb</code>. It is for people who build voice agents on phone calls and want numbers measured on audio like theirs, not on clean 16 kHz recordings.</p>
+  <p class="links">
+    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">View on GitHub</a>
+    <a href="#quickstart">Quickstart</a>
+  </p>
+
+  <figure>
+    <img src="images/wer-by-condition.png" alt="Bar chart of word error rate for Vosk and faster-whisper on four conditions: clean 16 kHz, 8 kHz mu-law, 8 kHz with 5 percent packet loss, and 8 kHz with 10 dB noise." width="1300" height="624">
+    <figcaption>A real run. 40 LibriSpeech utterances per condition, 752 words, with 95% intervals. The providers are two small local models, Vosk (small English) and faster-whisper base.en. This is not a ranking of hosted services.</figcaption>
+  </figure>
+
+  <h2>The problem</h2>
+  <p>Most speech-to-text numbers are measured on clean, wide-band audio. A phone call is 8 kHz, compressed by G.711 or Opus, loses packets, and often has noise. Accuracy drops, and a voice agent also needs the text quickly and without it changing every few hundred milliseconds.</p>
+  <p>Checking this by hand with a few test calls is slow and hard to repeat.</p>
+
+  <h2>What it does</h2>
+  <dl>
+    <dt>Makes phone audio, repeatably</dt>
+    <dd>8 kHz resampling, G.711 mu-law and A-law, optional Opus narrowband, random or burst packet loss with simple concealment, noise at a chosen SNR, and jitter. Every step uses a seed.</dd>
+    <dt>Streams in real time</dt>
+    <dd>Audio goes out in 20 ms frames at the pace of speech, so latency is measured, not guessed.</dd>
+    <dt>Measures</dt>
+    <dd>Word error rate and character error rate, time to first partial, time to the final transcript after speech ends, how often partial text is retracted or flickers, and real-time factor for local models.</dd>
+    <dt>Reports</dt>
+    <dd>JSON, Markdown and plain charts, per condition, with bootstrap confidence intervals.</dd>
+  </dl>
+
+  <h2>Results from the repo</h2>
+  <p>Medians and error rates from 40 utterances per condition, on one 8-CPU machine. Whisper does not stream, so the bench re-decodes its growing buffer once a second, and its latency reflects that.</p>
+
+  <figure>
+    <img src="images/terminal-report.png" alt="Terminal output of twb report listing WER, CER, first partial, final latency and flicker for four conditions and two providers." width="1056" height="380">
+    <figcaption>Output of <code>twb report</code> on the run folders in the repo.</figcaption>
+  </figure>
+
+  <figure>
+    <img src="images/latency-by-condition.png" alt="Two bar charts: time to first partial and time to final transcript for Vosk and faster-whisper across four conditions." width="1430" height="598">
+    <figcaption>Vosk streams natively. The Whisper figures come from the simple re-decode scheme used here.</figcaption>
+  </figure>
+
+  <p>What stood out: Vosk's error rate went from 10.2% on clean audio to 31.6% at 10 dB noise, while the 8 kHz mu-law step alone cost about four points. Differences smaller than the intervals on 40 utterances should be read as noise.</p>
+
+  <figure>
+    <img src="images/spectrograms.png" alt="Four spectrograms of the same utterance: clean 16 kHz, 8 kHz mu-law, 8 kHz with 10 percent packet loss and 8 kHz with 10 dB noise." width="1210" height="660">
+    <figcaption>The same utterance through four of the conditions.</figcaption>
+  </figure>
+
+  <h2 id="quickstart">Quickstart</h2>
+  <pre><code>git clone https://github.com/AQIB-NAWAB/telephony-wer-bench
+cd telephony-wer-bench
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -e ".[vosk,whisper]"
+
+# applies the conditions to the bundled 10-clip sample
+twb prepare --conditions examples/conditions.yaml --out twb-data/prepared
+twb run twb-data/prepared --provider vosk --out twb-runs/vosk
+twb report twb-runs/vosk --out twb-report</code></pre>
+
+  <h2>Providers</h2>
+  <ul>
+    <li><strong>Vosk and faster-whisper:</strong> run locally and tested.</li>
+    <li><strong>Deepgram, AssemblyAI, OpenAI Realtime, Google and Azure:</strong> adapters are included but untested. I have not run them. Pull requests with real results are welcome.</li>
+  </ul>
+
+  <h2>Related</h2>
+  <p><a href="https://voice-eval-toolkit.vercel.app">voice-eval-toolkit</a> is a sibling project. It tests how a voice agent behaves in a call: barge-in, turn gaps and latency under load. This one tests how well the speech-to-text stage hears the caller.</p>
+
+  <h2>Status</h2>
+  <p>Early, version 0.1. It works and has tests. The sample is small and the data is English read speech from LibriSpeech (CC BY 4.0). Open source, MIT license.</p>
+  <p class="links">
+    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">GitHub</a>
+    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/blob/main/README.md">README</a>
+    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/tree/main/docs">Docs</a>
+  </p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    Built by <a href="https://aqibnawab.vercel.app/">Aqib Nawab</a>. MIT license.
+  </div>
+</footer>
+
+</body>
+</html>
