@@ -6,6 +6,9 @@
   <title>telephony-wer-bench: how well does speech-to-text hear a phone call?</title>
   <meta name="description" content="An open source benchmark that streams phone-quality audio to speech-to-text services and measures word error rate, latency and partial stability.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="style.css">
   <meta property="og:title" content="telephony-wer-bench">
   <meta property="og:description" content="Word error rate, latency and partial stability of streaming speech-to-text on 8 kHz phone audio.">
@@ -14,8 +17,11 @@
 <body>
 
 <header class="top">
-  <div class="wrap">
-    <a class="name" href="/">telephony-wer-bench</a>
+  <div class="wrap head-inner">
+    <div class="brand">
+      <span class="kicker">v0.1 / lab report</span>
+      <a class="name" href="/">telephony-wer-bench</a>
+    </div>
     <nav>
       <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">GitHub</a>
       <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/tree/main/docs">Docs</a>
@@ -26,57 +32,185 @@
 
 <main class="wrap">
 
-  <h1>How well does speech-to-text hear a phone call?</h1>
-  <p class="lead">telephony-wer-bench takes clean speech, makes it sound like a phone line, streams it to a speech-to-text service in real time, and measures how many words it got wrong and how fast it answered.</p>
-  <p class="sub">It is a Python command line tool called <code>twb</code>. It is for people who build voice agents on phone calls and want numbers measured on audio like theirs, not on clean 16 kHz recordings.</p>
-  <p class="links">
-    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">View on GitHub</a>
-    <a href="#quickstart">Quickstart</a>
-  </p>
+  <section class="hero">
+    <h1>How well does speech-to-text hear a phone call?</h1>
+    <p class="lead">telephony-wer-bench takes clean speech, makes it sound like a phone line, streams it to a speech-to-text service in real time, and measures how many words it got wrong and how fast it answered.</p>
+    <p class="sub">It is a Python command line tool called <code>twb</code>. It is for people who build voice agents on phone calls and want numbers measured on audio like theirs, not on clean 16 kHz recordings.</p>
+    <p class="links">
+      <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">View on GitHub</a>
+      <a href="#quickstart">Quickstart</a>
+    </p>
+  </section>
 
-  <figure>
-    <img src="images/wer-by-condition.png" alt="Bar chart of word error rate for Vosk and faster-whisper on four conditions: clean 16 kHz, 8 kHz mu-law, 8 kHz with 5 percent packet loss, and 8 kHz with 10 dB noise." width="1300" height="624">
-    <figcaption>A real run. 40 LibriSpeech utterances per condition, 752 words, with 95% intervals. The providers are two small local models, Vosk (small English) and faster-whisper base.en. This is not a ranking of hosted services.</figcaption>
-  </figure>
+  <section class="results-block" aria-labelledby="results-heading">
+    <p class="kicker" id="results-heading">Results from this repo</p>
+    <p class="result-lead">40 LibriSpeech clips per condition, 752 words, run on one 8-CPU machine. The two providers are local models: Vosk small English, and faster-whisper base.en. This is not a ranking of hosted services.</p>
 
-  <h2>The problem</h2>
-  <p>Most speech-to-text numbers are measured on clean, wide-band audio. A phone call is 8 kHz, compressed by G.711 or Opus, loses packets, and often has noise. Accuracy drops, and a voice agent also needs the text quickly and without it changing every few hundred milliseconds.</p>
-  <p>Checking this by hand with a few test calls is slow and hard to repeat.</p>
+    <div class="table-wrap">
+      <table class="results">
+        <thead>
+          <tr>
+            <th scope="col">Condition</th>
+            <th scope="col" class="num">Vosk WER</th>
+            <th scope="col" class="num">Whisper WER</th>
+            <th scope="col" class="num">Vosk final</th>
+            <th scope="col" class="num">Whisper final</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Clean 16 kHz</th>
+            <td class="num">10.2%</td>
+            <td class="num">6.0%</td>
+            <td class="num">847 ms</td>
+            <td class="num">1965 ms</td>
+          </tr>
+          <tr>
+            <th scope="row">8 kHz mu-law</th>
+            <td class="num">14.1%</td>
+            <td class="num">6.2%</td>
+            <td class="num">835 ms</td>
+            <td class="num">1957 ms</td>
+          </tr>
+          <tr>
+            <th scope="row">+ 5% packet loss</th>
+            <td class="num">15.4%</td>
+            <td class="num">6.8%</td>
+            <td class="num">830 ms</td>
+            <td class="num">1978 ms</td>
+          </tr>
+          <tr>
+            <th scope="row">+ noise at 10 dB</th>
+            <td class="num">31.6%</td>
+            <td class="num">10.1%</td>
+            <td class="num">785 ms</td>
+            <td class="num">1910 ms</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <h2>What it does</h2>
-  <dl>
-    <dt>Makes phone audio, repeatably</dt>
-    <dd>8 kHz resampling, G.711 mu-law and A-law, optional Opus narrowband, random or burst packet loss with simple concealment, noise at a chosen SNR, and jitter. Every step uses a seed.</dd>
-    <dt>Streams in real time</dt>
-    <dd>Audio goes out in 20 ms frames at the pace of speech, so latency is measured, not guessed.</dd>
-    <dt>Measures</dt>
-    <dd>Word error rate and character error rate, time to first partial, time to the final transcript after speech ends, how often partial text is retracted or flickers, and real-time factor for local models.</dd>
-    <dt>Reports</dt>
-    <dd>JSON, Markdown and plain charts, per condition, with bootstrap confidence intervals.</dd>
-  </dl>
+    <div class="results-cards">
+      <article>
+        <h3>Clean 16 kHz</h3>
+        <dl>
+          <div><dt>Vosk WER</dt><dd>10.2%</dd></div>
+          <div><dt>Whisper WER</dt><dd>6.0%</dd></div>
+          <div><dt>Vosk final</dt><dd>847 ms</dd></div>
+          <div><dt>Whisper final</dt><dd>1965 ms</dd></div>
+        </dl>
+      </article>
+      <article>
+        <h3>8 kHz mu-law</h3>
+        <dl>
+          <div><dt>Vosk WER</dt><dd>14.1%</dd></div>
+          <div><dt>Whisper WER</dt><dd>6.2%</dd></div>
+          <div><dt>Vosk final</dt><dd>835 ms</dd></div>
+          <div><dt>Whisper final</dt><dd>1957 ms</dd></div>
+        </dl>
+      </article>
+      <article>
+        <h3>+ 5% packet loss</h3>
+        <dl>
+          <div><dt>Vosk WER</dt><dd>15.4%</dd></div>
+          <div><dt>Whisper WER</dt><dd>6.8%</dd></div>
+          <div><dt>Vosk final</dt><dd>830 ms</dd></div>
+          <div><dt>Whisper final</dt><dd>1978 ms</dd></div>
+        </dl>
+      </article>
+      <article>
+        <h3>+ noise at 10 dB</h3>
+        <dl>
+          <div><dt>Vosk WER</dt><dd>31.6%</dd></div>
+          <div><dt>Whisper WER</dt><dd>10.1%</dd></div>
+          <div><dt>Vosk final</dt><dd>785 ms</dd></div>
+          <div><dt>Whisper final</dt><dd>1910 ms</dd></div>
+        </dl>
+      </article>
+    </div>
 
-  <h2>Results from the repo</h2>
-  <p>Medians and error rates from 40 utterances per condition, on one 8-CPU machine. Whisper does not stream, so the bench re-decodes its growing buffer once a second, and its latency reflects that.</p>
+    <p class="table-note">Final is the median time to the final transcript after speech ends, about 0.8 s for Vosk and about 2 s for Whisper. Whisper does not truly stream: the bench re-decodes the growing buffer once a second, and those latency figures reflect that. 95% intervals are in the charts below. Differences smaller than those intervals on 40 clips should be read as noise.</p>
+  </section>
 
-  <figure>
-    <img src="images/terminal-report.png" alt="Terminal output of twb report listing WER, CER, first partial, final latency and flicker for four conditions and two providers." width="1056" height="380">
-    <figcaption>Output of <code>twb report</code> on the run folders in the repo.</figcaption>
-  </figure>
+  <section>
+    <h2>How the audio is degraded</h2>
+    <p>Each clip starts clean, then is pushed closer to a real phone call. Every step uses a seed so the same condition can be run again.</p>
+    <ol class="pipeline">
+      <li>
+        <span class="step">01</span>
+        <strong>Clean 16 kHz</strong>
+        <p>The original recording, wide-band and uncompressed.</p>
+      </li>
+      <li>
+        <span class="step">02</span>
+        <strong>8 kHz mu-law</strong>
+        <p>Downsampled and encoded with G.711, like a classic phone line.</p>
+      </li>
+      <li>
+        <span class="step">03</span>
+        <strong>Packet loss</strong>
+        <p>5% of frames dropped, with simple concealment.</p>
+      </li>
+      <li>
+        <span class="step">04</span>
+        <strong>Background noise</strong>
+        <p>Noise mixed in at a 10 dB signal-to-noise ratio.</p>
+      </li>
+    </ol>
+    <figure>
+      <img src="images/spectrograms.png" alt="Four spectrograms of the same utterance: clean 16 kHz, 8 kHz mu-law, 8 kHz with 10 percent packet loss and 8 kHz with 10 dB noise." width="1210" height="660">
+      <figcaption>The same utterance through four of the conditions.</figcaption>
+    </figure>
+  </section>
 
-  <figure>
-    <img src="images/latency-by-condition.png" alt="Two bar charts: time to first partial and time to final transcript for Vosk and faster-whisper across four conditions." width="1430" height="598">
-    <figcaption>Vosk streams natively. The Whisper figures come from the simple re-decode scheme used here.</figcaption>
-  </figure>
+  <section>
+    <h2>The problem</h2>
+    <p>Most speech-to-text numbers are measured on clean, wide-band audio. A phone call is 8 kHz, compressed by G.711 or Opus, loses packets, and often has noise. Accuracy drops, and a voice agent also needs the text quickly and without it changing every few hundred milliseconds.</p>
+    <p>Checking this by hand with a few test calls is slow and hard to repeat.</p>
+  </section>
 
-  <p>What stood out: Vosk's error rate went from 10.2% on clean audio to 31.6% at 10 dB noise, while the 8 kHz mu-law step alone cost about four points. Differences smaller than the intervals on 40 utterances should be read as noise.</p>
+  <section>
+    <h2>What it measures</h2>
+    <ul class="measure">
+      <li>
+        <strong>Phone audio, made the same way each time.</strong>
+        8 kHz resampling, G.711 mu-law and A-law, optional Opus narrowband, random or burst packet loss with simple concealment, noise at a chosen SNR, and jitter.
+      </li>
+      <li>
+        <strong>Streaming in real time.</strong>
+        Audio goes out in 20 ms frames at the pace of speech, so latency is measured, not guessed.
+      </li>
+      <li>
+        <strong>Scores.</strong>
+        Word error rate and character error rate, time to first partial, time to the final transcript after speech ends, how often partial text is retracted or flickers, and real-time factor for local models.
+      </li>
+      <li>
+        <strong>Reports.</strong>
+        JSON, Markdown and plain charts, per condition, with bootstrap confidence intervals.
+      </li>
+    </ul>
+  </section>
 
-  <figure>
-    <img src="images/spectrograms.png" alt="Four spectrograms of the same utterance: clean 16 kHz, 8 kHz mu-law, 8 kHz with 10 percent packet loss and 8 kHz with 10 dB noise." width="1210" height="660">
-    <figcaption>The same utterance through four of the conditions.</figcaption>
-  </figure>
+  <section>
+    <h2>The same numbers, as charts</h2>
+    <figure>
+      <img src="images/wer-by-condition.png" alt="Bar chart of word error rate for Vosk and faster-whisper on four conditions: clean 16 kHz, 8 kHz mu-law, 8 kHz with 5 percent packet loss, and 8 kHz with 10 dB noise." width="1300" height="624">
+      <figcaption>Word error rate with 95% intervals. Vosk went from 10.2% on clean audio to 31.6% at 10 dB noise. The 8 kHz mu-law step alone cost Vosk about four points. On a louder crowd-chatter condition, not shown in this chart, Vosk reached 54.4%. Whisper was not run on that condition.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/latency-by-condition.png" alt="Two bar charts: time to first partial and time to final transcript for Vosk and faster-whisper across four conditions." width="1430" height="598">
+      <figcaption>Vosk streams natively. The Whisper figures come from the simple re-decode scheme used here.</figcaption>
+    </figure>
+    <figure class="term">
+      <div class="term-bar">twb report</div>
+      <img src="images/terminal-report.png" alt="Terminal output of twb report listing WER, CER, first partial, final latency and flicker for four conditions and two providers." width="1056" height="380">
+      <figcaption>Output of <code>twb report</code> on the run folders in the repo.</figcaption>
+    </figure>
+  </section>
 
-  <h2 id="quickstart">Quickstart</h2>
-  <pre><code>git clone https://github.com/AQIB-NAWAB/telephony-wer-bench
+  <section id="quickstart">
+    <h2>Quickstart</h2>
+    <pre><code>git clone https://github.com/AQIB-NAWAB/telephony-wer-bench
 cd telephony-wer-bench
 python -m venv .venv &amp;&amp; source .venv/bin/activate
 pip install -e ".[vosk,whisper]"
@@ -85,23 +219,30 @@ pip install -e ".[vosk,whisper]"
 twb prepare --conditions examples/conditions.yaml --out twb-data/prepared
 twb run twb-data/prepared --provider vosk --out twb-runs/vosk
 twb report twb-runs/vosk --out twb-report</code></pre>
+  </section>
 
-  <h2>Providers</h2>
-  <ul>
-    <li><strong>Vosk and faster-whisper:</strong> run locally and tested.</li>
-    <li><strong>Deepgram, AssemblyAI, OpenAI Realtime, Google and Azure:</strong> adapters are included but untested. I have not run them. Pull requests with real results are welcome.</li>
-  </ul>
+  <section>
+    <h2>Providers</h2>
+    <ul>
+      <li><strong>Vosk and faster-whisper:</strong> run locally and tested.</li>
+      <li><strong>Deepgram, AssemblyAI, OpenAI Realtime, Google and Azure:</strong> adapters are included but untested. I have not run them. Pull requests with real results are welcome.</li>
+    </ul>
+  </section>
 
-  <h2>Related</h2>
-  <p><a href="https://voice-eval-toolkit.vercel.app">voice-eval-toolkit</a> is a sibling project. It tests how a voice agent behaves in a call: barge-in, turn gaps and latency under load. This one tests how well the speech-to-text stage hears the caller.</p>
+  <section>
+    <h2>Related</h2>
+    <p><a href="https://voice-eval-toolkit.vercel.app">voice-eval-toolkit</a> is a sibling project. It tests how a voice agent behaves in a call: barge-in, turn gaps and latency under load. This one tests how well the speech-to-text stage hears the caller.</p>
+  </section>
 
-  <h2>Status</h2>
-  <p>Early, version 0.1. It works and has tests. The sample is small and the data is English read speech from LibriSpeech (CC BY 4.0). Open source, MIT license.</p>
-  <p class="links">
-    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">GitHub</a>
-    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/blob/main/README.md">README</a>
-    <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/tree/main/docs">Docs</a>
-  </p>
+  <section>
+    <h2>Status</h2>
+    <p>Early, version 0.1. It works and has tests. The sample is small and the data is English read speech from LibriSpeech (CC BY 4.0). Open source, MIT license.</p>
+    <p class="links">
+      <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench">GitHub</a>
+      <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/blob/main/README.md">README</a>
+      <a href="https://github.com/AQIB-NAWAB/telephony-wer-bench/tree/main/docs">Docs</a>
+    </p>
+  </section>
 
 </main>
 
