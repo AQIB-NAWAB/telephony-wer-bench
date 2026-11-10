@@ -1,0 +1,22 @@
+# More conditions. Opus needs ffmpeg built with libopus.
+conditions:
+  - {name: clean-16k, sample_rate: 16000}
+  - {name: mulaw-8k, sample_rate: 8000, codec: mulaw}
+  - {name: alaw-8k, sample_rate: 8000, codec: alaw}
+  - {name: opus-nb-12k, sample_rate: 8000, codec: opus, opus_bitrate: 12000}
+  - {name: mulaw-8k-loss5, sample_rate: 8000, codec: mulaw, loss: 0.05}
+  - {name: mulaw-8k-loss10, sample_rate: 8000, codec: mulaw, loss: 0.10}
+  - {name: mulaw-8k-burst10, sample_rate: 8000, codec: mulaw, loss: 0.10, loss_burst: 0.6}
+  - {name: mulaw-8k-jitter, sample_rate: 8000, codec: mulaw, jitter_ms: 40, jitter_buffer_ms: 60}
+  - name: mulaw-8k-snr20
+    sample_rate: 8000
+    codec: mulaw
+    noise: {type: pink, snr_db: 20}
+  - name: mulaw-8k-snr10
+    sample_rate: 8000
+    codec: mulaw
+    noise: {type: pink, snr_db: 10}
+  - name: mulaw-8k-babble10
+    sample_rate: 8000
+    codec: mulaw
+    noise: {type: babble, snr_db: 10}

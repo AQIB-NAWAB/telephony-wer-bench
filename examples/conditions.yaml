@@ -1,0 +1,22 @@
+# Default benchmark conditions. Each one starts from clean 16 kHz source audio.
+conditions:
+  - name: clean-16k
+    description: Source audio, 16 kHz, no impairment. The reference point.
+    sample_rate: 16000
+
+  - name: mulaw-8k
+    description: Resampled to 8 kHz and passed through G.711 mu-law.
+    sample_rate: 8000
+    codec: mulaw
+
+  - name: mulaw-8k-loss5
+    description: mu-law plus 5 percent random packet loss, simple repeat concealment.
+    sample_rate: 8000
+    codec: mulaw
+    loss: 0.05
+
+  - name: mulaw-8k-snr10
+    description: Pink noise at 10 dB SNR before the 8 kHz mu-law path.
+    sample_rate: 8000
+    codec: mulaw
+    noise: {type: pink, snr_db: 10}

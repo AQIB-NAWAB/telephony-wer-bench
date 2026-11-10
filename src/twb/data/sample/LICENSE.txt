@@ -1,0 +1,2 @@
+Audio and transcripts are from LibriSpeech test-clean, licensed CC BY 4.0.
+V. Panayotov, G. Chen, D. Povey, S. Khudanpur. LibriSpeech: an ASR corpus based on public domain audio books. ICASSP 2015. Data: https://www.openslr.org/12 (CC BY 4.0).
