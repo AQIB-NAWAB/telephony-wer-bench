@@ -1,0 +1,29 @@
+{
+  "twb_version": "0.1.0",
+  "provider": {
+    "name": "faster-whisper-base.en",
+    "tested": true,
+    "description": "faster-whisper base.en (float32), local, streaming simulated by re-decoding the growing buffer."
+  },
+  "provider_spec": {
+    "name": "whisper",
+    "options": {
+      "model_size": "base.en",
+      "cpu_threads": 2
+    }
+  },
+  "manifest": "twb-data/prepared",
+  "utterances": 40,
+  "entries": 160,
+  "workers": 3,
+  "tail_s": 0.6,
+  "paced_real_time": true,
+  "started_unix": 1794291160.3811326,
+  "wall_seconds": 542.0,
+  "machine": {
+    "cpus": 8,
+    "platform": "Linux-6.12.113+-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  },
+  "errors": 0
+}

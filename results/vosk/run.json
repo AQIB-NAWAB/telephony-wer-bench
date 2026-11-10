@@ -1,0 +1,26 @@
+{
+  "twb_version": "0.1.0",
+  "provider": {
+    "name": "vosk-small-en",
+    "tested": true,
+    "description": "Vosk small English model (Kaldi), local, natively streaming. 8 kHz input is upsampled to 16 kHz."
+  },
+  "provider_spec": {
+    "name": "vosk",
+    "options": {}
+  },
+  "manifest": "twb-data/prepared",
+  "utterances": 40,
+  "entries": 440,
+  "workers": 6,
+  "tail_s": 0.6,
+  "paced_real_time": true,
+  "started_unix": 1794288714.212259,
+  "wall_seconds": 565.8,
+  "machine": {
+    "cpus": 8,
+    "platform": "Linux-6.12.113+-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  },
+  "errors": 0
+}

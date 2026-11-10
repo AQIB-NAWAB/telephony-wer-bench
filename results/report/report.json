@@ -1,0 +1,354 @@
+{
+  "twb_version": "0.1.0",
+  "baseline_condition": "clean-16k",
+  "condition_order": [
+    "clean-16k",
+    "mulaw-8k",
+    "mulaw-8k-loss5",
+    "mulaw-8k-snr10"
+  ],
+  "providers": {
+    "vosk-small-en": {
+      "info": {
+        "name": "vosk-small-en",
+        "tested": true,
+        "description": "Vosk small English model (Kaldi), local, natively streaming. 8 kHz input is upsampled to 16 kHz."
+      },
+      "run": {
+        "utterances": 40,
+        "entries": 440,
+        "workers": 6,
+        "tail_s": 0.6,
+        "paced_real_time": true,
+        "machine": {
+          "cpus": 8,
+          "platform": "Linux-6.12.113+-x86_64-with-glibc2.41",
+          "python": "3.13.5"
+        },
+        "wall_seconds": 565.8,
+        "errors": 0
+      },
+      "conditions": {
+        "clean-16k": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.1024,
+          "wer_sub": 60,
+          "wer_del": 4,
+          "wer_ins": 13,
+          "cer": 0.0394,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 626.3,
+            "p50_ms": 608.0,
+            "p95_ms": 1014.4,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 841.4,
+            "p50_ms": 846.6,
+            "p95_ms": 1058.2,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 18.7,
+            "p50_ms": 17.9,
+            "p95_ms": 34.8,
+            "n": 40
+          },
+          "real_time_factor": 0.158,
+          "partials_total": 689,
+          "retraction_rate": 0.0294,
+          "flicker_rate": 0.1492,
+          "wer_ci95": [
+            0.0759,
+            0.1348
+          ],
+          "errors": 0
+        },
+        "mulaw-8k": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.141,
+          "wer_sub": 84,
+          "wer_del": 7,
+          "wer_ins": 15,
+          "cer": 0.0619,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 652.3,
+            "p50_ms": 615.6,
+            "p95_ms": 1063.4,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 830.3,
+            "p50_ms": 835.4,
+            "p95_ms": 1057.8,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 18.9,
+            "p50_ms": 17.4,
+            "p95_ms": 34.5,
+            "n": 40
+          },
+          "real_time_factor": 0.162,
+          "partials_total": 701,
+          "retraction_rate": 0.041,
+          "flicker_rate": 0.1761,
+          "wer_ci95": [
+            0.1077,
+            0.1808
+          ],
+          "errors": 0
+        },
+        "mulaw-8k-loss5": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.1543,
+          "wer_sub": 93,
+          "wer_del": 9,
+          "wer_ins": 14,
+          "cer": 0.0716,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 655.3,
+            "p50_ms": 618.8,
+            "p95_ms": 1057.3,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 832.7,
+            "p50_ms": 830.5,
+            "p95_ms": 1057.7,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 19.2,
+            "p50_ms": 16.8,
+            "p95_ms": 36.1,
+            "n": 40
+          },
+          "real_time_factor": 0.165,
+          "partials_total": 707,
+          "retraction_rate": 0.0376,
+          "flicker_rate": 0.1926,
+          "wer_ci95": [
+            0.1205,
+            0.1945
+          ],
+          "errors": 0
+        },
+        "mulaw-8k-snr10": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.3165,
+          "wer_sub": 179,
+          "wer_del": 43,
+          "wer_ins": 16,
+          "cer": 0.1826,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 660.6,
+            "p50_ms": 614.8,
+            "p95_ms": 1141.0,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 759.6,
+            "p50_ms": 784.9,
+            "p95_ms": 1058.0,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 22.8,
+            "p50_ms": 18.1,
+            "p95_ms": 53.0,
+            "n": 40
+          },
+          "real_time_factor": 0.185,
+          "partials_total": 709,
+          "retraction_rate": 0.083,
+          "flicker_rate": 0.3491,
+          "wer_ci95": [
+            0.2569,
+            0.3721
+          ],
+          "errors": 0
+        }
+      }
+    },
+    "faster-whisper-base.en": {
+      "info": {
+        "name": "faster-whisper-base.en",
+        "tested": true,
+        "description": "faster-whisper base.en (float32), local, streaming simulated by re-decoding the growing buffer."
+      },
+      "run": {
+        "utterances": 40,
+        "entries": 160,
+        "workers": 3,
+        "tail_s": 0.6,
+        "paced_real_time": true,
+        "machine": {
+          "cpus": 8,
+          "platform": "Linux-6.12.113+-x86_64-with-glibc2.41",
+          "python": "3.13.5"
+        },
+        "wall_seconds": 542.0,
+        "errors": 0
+      },
+      "conditions": {
+        "clean-16k": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.0598,
+          "wer_sub": 30,
+          "wer_del": 3,
+          "wer_ins": 12,
+          "cer": 0.0237,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 1297.8,
+            "p50_ms": 1271.9,
+            "p95_ms": 1589.4,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 2077.7,
+            "p50_ms": 1965.0,
+            "p95_ms": 2661.1,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 1152.4,
+            "p50_ms": 1066.2,
+            "p95_ms": 1689.8,
+            "n": 40
+          },
+          "real_time_factor": 0.856,
+          "partials_total": 248,
+          "retraction_rate": 0.0996,
+          "flicker_rate": 0.3628,
+          "wer_ci95": [
+            0.0398,
+            0.0847
+          ],
+          "errors": 0
+        },
+        "mulaw-8k": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.0625,
+          "wer_sub": 31,
+          "wer_del": 4,
+          "wer_ins": 12,
+          "cer": 0.0272,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 1297.4,
+            "p50_ms": 1294.5,
+            "p95_ms": 1626.3,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 2020.5,
+            "p50_ms": 1956.8,
+            "p95_ms": 2574.9,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 1115.4,
+            "p50_ms": 1060.0,
+            "p95_ms": 1591.5,
+            "n": 40
+          },
+          "real_time_factor": 0.85,
+          "partials_total": 244,
+          "retraction_rate": 0.0956,
+          "flicker_rate": 0.3911,
+          "wer_ci95": [
+            0.0412,
+            0.0879
+          ],
+          "errors": 0
+        },
+        "mulaw-8k-loss5": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.0678,
+          "wer_sub": 35,
+          "wer_del": 5,
+          "wer_ins": 11,
+          "cer": 0.0292,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 1296.3,
+            "p50_ms": 1305.3,
+            "p95_ms": 1599.3,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 2010.8,
+            "p50_ms": 1978.2,
+            "p95_ms": 2585.8,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 1105.7,
+            "p50_ms": 1067.4,
+            "p95_ms": 1641.2,
+            "n": 40
+          },
+          "real_time_factor": 0.833,
+          "partials_total": 244,
+          "retraction_rate": 0.1066,
+          "flicker_rate": 0.4336,
+          "wer_ci95": [
+            0.044,
+            0.0942
+          ],
+          "errors": 0
+        },
+        "mulaw-8k-snr10": {
+          "utterances": 40,
+          "ref_words": 752,
+          "wer": 0.1011,
+          "wer_sub": 52,
+          "wer_del": 6,
+          "wer_ins": 18,
+          "cer": 0.0452,
+          "empty_transcripts": 0,
+          "time_to_first_partial": {
+            "mean_ms": 1312.3,
+            "p50_ms": 1291.2,
+            "p95_ms": 1640.7,
+            "n": 40
+          },
+          "final_latency_after_speech_end": {
+            "mean_ms": 1963.1,
+            "p50_ms": 1909.9,
+            "p95_ms": 2511.3,
+            "n": 40
+          },
+          "flush_after_stream_end": {
+            "mean_ms": 1058.0,
+            "p50_ms": 979.7,
+            "p95_ms": 1531.4,
+            "n": 40
+          },
+          "real_time_factor": 0.836,
+          "partials_total": 253,
+          "retraction_rate": 0.1025,
+          "flicker_rate": 0.4163,
+          "wer_ci95": [
+            0.071,
+            0.1334
+          ],
+          "errors": 0
+        }
+      }
+    }
+  }
+}

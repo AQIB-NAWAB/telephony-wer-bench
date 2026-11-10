@@ -45,8 +45,8 @@ def plot_wer(report: dict, path: Path) -> Path:
             hi.append((ci[1] * 100 if ci else d["wer"] * 100) - d["wer"] * 100)
         ax.bar(xs, ys, width * 0.92, color=PALETTE[k % len(PALETTE)], label=name,
                yerr=[lo, hi], error_kw={"ecolor": "#333333", "elinewidth": 1, "capsize": 3})
-        for x, y in zip(xs, ys):
-            ax.text(x, y + 0.6, f"{y:.1f}", ha="center", va="bottom", fontsize=8, color="#333333")
+        for x, y, h in zip(xs, ys, hi):
+            ax.text(x, y + h + 0.5, f"{y:.1f}", ha="center", va="bottom", fontsize=8, color="#333333")
     ax.set_xticks(range(len(conds)))
     ax.set_xticklabels(conds, fontsize=8 if wide else 9, rotation=20 if wide else 0)
     ax.set_ylabel("Word error rate (%)")
@@ -81,13 +81,15 @@ def plot_latency(report: dict, path: Path) -> Path:
                 ax.text(x, y, f"{y:.0f}", ha="center", va="bottom", fontsize=8, color="#333333")
         ax.set_xticks(range(len(conds)))
         ax.set_xticklabels(conds, fontsize=8, rotation=15)
+        ax.set_ylim(0, ax.get_ylim()[1] * 1.08)
         ax.set_title(title, loc="left", fontsize=11)
         _style(ax)
-    axes[0].legend(frameon=False, fontsize=9)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, frameon=False, fontsize=9, loc="upper right", ncol=len(labels))
     fig.text(0.01, 0.01,
              f"{_sample_note(report)}. Real-time paced, 20 ms frames. Latency depends on this machine.",
              fontsize=8, color="#666666")
-    fig.subplots_adjust(bottom=0.2)
+    fig.subplots_adjust(bottom=0.2, top=0.86)
     fig.savefig(path, facecolor="white")
     plt.close(fig)
     return path
